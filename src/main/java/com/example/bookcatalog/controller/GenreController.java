@@ -7,12 +7,14 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/genres")
+@Controller
+@RequestMapping("/genres")
 public class GenreController {
     private final GenreService genreService;
 
@@ -34,6 +36,38 @@ public class GenreController {
             return ResponseEntity.ok(books);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping
+    public String showGenres(Model model) {
+        List<Genre> genres = genreService.getAllGenres();
+        model.addAttribute("genres", genres);
+        model.addAttribute("newGenre", new Genre()); // Для формы добавления нового жанра
+        return "genres";
+    }
+
+    @PostMapping("/add")
+    public String addGenre(@ModelAttribute Genre newGenre) {
+        genreService.createGenre(newGenre);
+        return "redirect:/genres";
+    }
+
+    @GetMapping("/{id}/delete")
+    public String deleteGenre(@PathVariable Long id) {
+        genreService.deleteGenreById(id);
+        return "redirect:/genres";
+    }
+
+    @GetMapping("/{genreName}/books-info")
+    public String showGenreBooks(@PathVariable String genreName, Model model) {
+        try {
+            List<Book> books = genreService.getBooksByGenreName(genreName);
+            model.addAttribute("books", books);
+            model.addAttribute("genreName", genreName); // Добавляем genreName в модель
+            return "genrebooks";
+        } catch (EntityNotFoundException e) {
+            return "redirect:/genres";
         }
     }
 }

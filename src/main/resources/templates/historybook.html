@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book History</title>
+</head>
+<body>
+<h1>Book History</h1>
+<ul>
+    <li th:each="loan : ${bookHistory}">
+        <p th:text="${loan.borrowedDate}"></p>
+        <p th:text="${loan.returnedDate} ? 'Returned' : 'Borrowed'"></p>
+        <p th:text="${loan.reader.username}"></p>
+    </li>
+</ul>
+<a href="/books/list">Back to All Books</a>
+</body>
+</html>

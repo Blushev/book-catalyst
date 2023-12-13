@@ -9,13 +9,16 @@ public class BookLoan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private Book book;
-    @ManyToOne
-    private User reader;
     private LocalDateTime borrowedDate;
     private LocalDateTime returnedDate;
 
+    @ManyToOne
+    @JoinColumn(name = "book_id", referencedColumnName = "id") // "book_id" - это имя внешнего ключа в таблице "book_loan"
+    private Book book;
+
+    @ManyToOne
+    @JoinColumn(name = "reader_id", referencedColumnName = "id") // "reader_id" - это имя внешнего ключа в таблице "book_loan"
+    private User reader;
     public BookLoan() {}
 
     public BookLoan(Long id, Book book, User reader, LocalDateTime borrowedDate, LocalDateTime returnedDate) {

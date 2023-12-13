@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Details</title>
+</head>
+<body>
+<h1>Book Details</h1>
+<dl>
+    <dt>ID:</dt>
+    <dd th:text="${book.id}"></dd>
+    <dt>Name:</dt>
+    <dd th:text="${book.name}"></dd>
+    <dt>Author:</dt>
+    <dd th:text="${book.author}"></dd>
+    <dt>Description:</dt>
+    <dd th:text="${book.description}"></dd>
+    <dt>Available Copies:</dt>
+    <dd th:text="${book.availableCopies}"></dd>
+    <dt>Genres:</dt>
+    <dd>
+            <span th:each="genre : ${book.genres}">
+                <span th:text="${genre.name}"></span>
+                <span th:if="${!#lists.last(genres)}">, </span>
+            </span>
+    </dd>
+</dl>
+<a href="/books">Back to All Books</a>
+</body>
+</html>

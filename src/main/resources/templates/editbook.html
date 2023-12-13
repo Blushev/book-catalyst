@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Book</title>
+</head>
+<body>
+<h1>Edit Book</h1>
+<form id="editBookForm" th:action="@{/books/edit}" th:method="put">
+    <input type="hidden" id="id" name="id" th:value="${book.id}"/>
+
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" th:value="${book.name}" required><br>
+
+    <label for="author">Author:</label>
+    <input type="text" id="author" name="author" th:value="${book.author}" required><br>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required th:text="${book.description}"></textarea><br>
+
+    <label for="availableCopies">Available Copies:</label>
+    <input type="number" id="availableCopies" name="availableCopies" th:value="${book.availableCopies}" required><br>
+
+    <label>Genres:</label>
+    <input type="text" id="genres" name="genres" th:value="${book.getGenreNames()}" required><br>
+
+    <button type="submit">Save Changes</button>
+</form>
+<a href="/books/list">Back to All Books</a>
+
+<!-- JavaScript для обработки формы -->
+<script>
+    document.getElementById('editBookForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        // Проверка, если id не является числом, выход
+        if (isNaN(Number(this.querySelector('#id').value))) {
+            console.error('Invalid id format');
+            return;
+        }
+
+        const formData = new FormData(this);
+        const jsonData = {};
+
+        formData.forEach((value, key) => {
+            if (key === 'genres') {
+                // Разделить строку с жанрами на массив
+                jsonData[key] = value.split(',').map(genre => genre.trim());
+            } else {
+                jsonData[key] = value;
+            }
+        });
+
+        console.log(jsonData);
+
+        const response = await fetch(this.getAttribute('action'), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        });
+
+        if (response.ok) {
+            // Добавим обработку успешного ответа
+            const responseData = await response.json();
+
+            if (response.status === 200 && responseData.message === 'Book updated successfully') {
+                window.location.href = "/books/list";
+            } else {
+                console.error('Error updating book:', responseData.message);
+            }
+        } else {
+            console.error('Error:', response.statusText);
+        }
+    });
+</script>
+
+</body>
+</html>

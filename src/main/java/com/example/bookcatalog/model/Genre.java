@@ -11,15 +11,20 @@ public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String genreName;
+
     @ManyToMany(mappedBy = "genres")
     @JsonIgnore
     private Set<Book> books;
 
-    public Genre() {}
-    public Genre(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    public Genre() {
+        this.books = new HashSet<>();
+    }
+
+    // Добавляем конструктор с одним аргументом
+    public Genre(String genreName) {
+        this.genreName = genreName;
+        this.books = new HashSet<>();
     }
 
     public Long getId() {
@@ -30,12 +35,12 @@ public class Genre {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getGenreName() {
+        return genreName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGenreName(String name) {
+        this.genreName = name;
     }
 
     public Set<Book> getBooks() {

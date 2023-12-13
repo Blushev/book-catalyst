@@ -2,8 +2,8 @@ package com.example.bookcatalog.model;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Book {
@@ -17,6 +17,16 @@ public class Book {
     private String author;
     @Column(nullable = false)
     private int availableCopies;
+
+    public String status;
+
+    @ManyToOne
+    @JoinColumn(name = "book_loan") // предположим, что связь с BookLoan устанавливается через поле bookLoan
+    private BookLoan bookLoan;
+
+    @Column(name = "reader_id", insertable = false, updatable = false)
+    private Long readerId;
+
     @ManyToMany
     @JoinTable(
             name = "book_genre",
@@ -74,13 +84,19 @@ public class Book {
     public void setGenres(Set<Genre> genres) {
         this.genres = genres;
     }
+
     public void addGenre(Genre genre) {
         if (!genres.contains(genre)) {
             genres.add(genre);
             genre.addBook(this);
         }
     }
-
+    public String getGenreNames() {
+        if (genres != null) {
+            return genres.stream().map(Genre::getGenreName).collect(Collectors.joining(", "));
+        }
+        return "";
+    }
     public void removeGenre(Genre genre) {
         if (genres.contains(genre)) {
             genres.remove(genre);
@@ -94,5 +110,36 @@ public class Book {
 
     public void increaseAvailableCopies() {
         availableCopies++;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public BookLoan getBookLoan() {
+        return bookLoan;
+    }
+
+    public void setBookLoan(BookLoan bookLoan) {
+        this.bookLoan = bookLoan;
+    }
+
+    public Long getReaderId() {
+        return readerId;
+    }
+
+    public void setReaderId(Long readerId) {
+        this.readerId = readerId;
+    }
+
+    @PreRemove
+    private void preRemove() {
+        if (bookLoan != null) {
+            bookLoan.setBook(null);
+        }
     }
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genre Books</title>
+</head>
+<body>
+
+<h2>Books by Genre</h2>
+
+<div th:if="${not #lists.isEmpty(books)}">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <!-- Добавьте другие поля, если необходимо -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.name}"></td>
+            <td th:text="${book.author}"></td>
+            <!-- Добавьте другие поля, если необходимо -->
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:if="${#lists.isEmpty(books)}">
+    <p>No books found for this genre.</p>
+</div>
+
+<a th:href="@{/genres/{genreName}/books-info(genreName=${genreName})}">Back to Genres</a>
+
+</body>
+</html>
